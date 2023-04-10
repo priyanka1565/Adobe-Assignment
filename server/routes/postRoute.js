@@ -8,9 +8,9 @@ const {
   deletePostById,
   likePostById,
   unlikePostById,
-} = require("../controllers/post.controller");
+} = require("../controllers/postController")
 
-router.post("/", createPost);
+router.post("/createpost", createPost);
 router.get("/:id", getPostById);
 router.put("/:id", updatePostById);
 router.delete("/:id", deletePostById);

@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import axios from "axios";
 import {
   Box,
   FormControl,
@@ -6,75 +8,84 @@ import {
   Button,
   Heading,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import React from "react";
-import axios from "axios";
 
 const UserF = () => {
-    const [email, setEmail] = useState("");
-    const [bio, setBio] = useState("");
-    const [name, setName] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
 
-    const handleSubmit = async (e) => {
-         e.preventDefault();
-        //console.log("ghgggg")
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-        const UserInfor = { name, email, bio }
-        console.log("UserInfor", UserInfor);
+    const UserData = { name, email, bio };
+    console.log(UserData);
 
-        //fetching the data using axios
-
-        const fetch_data = await axios.post("http://localhost:8080", {});
+    try {
+      const response = await axios.post("http://localhost:3000/users", {
+        ...UserData,
+      });
+      setName("");
+      setEmail("");
+      setBio("");
+      localStorage.setItem("user", JSON.stringify(response.data.id));
+    } catch (error) {
+      console.log(error.message);
     }
+  };
 
   return (
-    <div>
-      <Box
-        maxW="md"
-        mx="auto"
-        padding={"2rem"}
-        boxShadow={
-          "hsla(27.272727272727245, 5.213270142180097%, 41.37254901960784%, 0.2) 0px 7px 29px 0px;"
-        }
-        marginTop={"5.5rem"}
-        borderRadius={"0.5rem"}
-      >
-        <form onSubmit={handleSubmit}>
-          <Heading textAlign={"center"} marginBottom={"2rem"}>
-            User Information
-          </Heading>
-          <FormControl id="name">
-            <FormLabel> Name</FormLabel>
-            <Input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) =>setName(e.target.value)}
-            />
-          </FormControl>
+    <Box
+      maxW="md"
+      mx="auto"
+      padding={"2rem"}
+      boxShadow={"rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"}
+      marginTop={"5rem"}
+      borderRadius={"0.5rem"}
+    >
+      <form onSubmit={handleSubmit}>
+        <Heading textAlign={"center"} marginBottom={"2rem"}>
+          User Form
+        </Heading>
+        <FormControl id="username">
+          <FormLabel>Name</FormLabel>
+          <Input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
+        </FormControl>
 
-          <FormControl id="email">
-            <FormLabel> Email</FormLabel>
-            <Input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </FormControl>
+        <FormControl id="email">
+          <FormLabel>Email</FormLabel>
+          <Input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </FormControl>
 
-          <FormControl id="bio">
-            <FormLabel> Bio</FormLabel>
-            <Input type="text" value={bio} onChange={(e) => setBio(e.target.value)} />
-          </FormControl>
+        {/* <FormControl id="password">
+        <FormLabel>Password</FormLabel>
+        <Input type="password" />
+      </FormControl> */}
 
-          <Button mt={4} colorScheme="cyan" type="submit">
-            Save
-          </Button>
-        </form>
-      </Box>
-    </div>
+        <FormControl id="bio">
+          <FormLabel>Bio</FormLabel>
+          <Input
+            type="textarea"
+            id="bio"
+            value={bio}
+            onChange={(event) => setBio(event.target.value)}
+          />
+        </FormControl>
+
+        <Button mt={4} colorScheme="teal" type="submit">
+          Save
+        </Button>
+      </form>
+    </Box>
   );
 };
-
 export default UserF;
