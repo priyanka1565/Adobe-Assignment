@@ -1,8 +1,16 @@
 const mongoose = require("mongoose");
 
-const postSchema = mongoose.Schema(
+const postSchema = new mongoose.Schema(
   {
-   
+    id: {
+      unique: true,
+      type: String,
+    },
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
     content: {
       type: String,
       required: true,
@@ -11,13 +19,11 @@ const postSchema = mongoose.Schema(
     },
     likes: {
       type: Number,
-      default: 0,
       min: 0,
+      default: 0,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const Post = mongoose.model("Post", postSchema);

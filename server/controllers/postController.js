@@ -1,92 +1,88 @@
-const Post = require("../model/postModel");
+const PostModel = require("../model/postModel");
+const UserModel = require("../model/userModel");
+var uniqid = require("uniqid"); 
 
 // Create post
 const createPost = async (req, res) => {
-  const { user_id, content } = req.body;
   try {
-    const post = await Post.create({ user_id, content });
-    res.status(201).json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    const { content, user } = req.body;
+    const FindUser = await UserModel.findOne({ id: user });
+    if (!FindUser) return res.status(400).send({ error: "User not found" });
+    const post = new PostModel({
+      content,
+      id: uniqid(),
+      user_id: FindUser._id,
+    });
+    await post.save();
+    res.send(post);
+  } catch (e) {
+    res.status(404).send({ error: e.message });
   }
+  
 };
 
 // Retrive post by Id
 const getPostById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const post = await Post.findById(id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    res.json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
+ try {
+   const id = req.params.id;
+   const post = await PostModel.findOne({ id: id });
+   res.send(post);
+ } catch (e) {
+   res.status(500).send(e.message);
+ }
 };
 
 const updatePostById = async (req, res) => {
-  const { id } = req.params;
-  const { content } = req.body;
   try {
-    const post = await Post.findByIdAndUpdate(id, { content }, { new: true });
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    res.status(200).json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    const { content } = req.body;
+    const id = req.params.id;
+    const post = await PostModel.findOneAndUpdate({ id: id }, { content });
+    console.log(content);
+    res.send(post);
+  } catch (e) {
+    res.status(500).send(e.message);
   }
 };
 
 const deletePostById = async (req, res) => {
-  const { id } = req.params;
   try {
-    const post = await Post.findByIdAndDelete(id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    res.status(200).json({ message: "Post deleted" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    const id = req.params.id;
+    const post = await PostModel.deleteOne({ id: id });
+    res.status(200).send("post deleted successfully");
+  } catch (e) {
+    res.status(500).send(e.message);
   }
 };
 
 const likePostById = async (req, res) => {
-  const { id } = req.params;
   try {
-    const post = await Post.findById(id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    post.likes += 1;
-    await post.save();
-    res.status(200).json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    const postId = req.params.id;
+    console.log(postId);
+    const result = await PostModel.findOneAndUpdate(
+      postId,
+      { $inc: { likes: 1 } },
+      { new: true }
+    );
+    res.status(201).send(result);
+  } catch (e) {
+    res.status(500).send(e.message);
   }
 };
 
 const unlikePostById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const post = await Post.findById(id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+ try{
+      const postId=req.params.id
+      const result = await PostModel.findOneAndUpdate(
+        postId,
+        { $inc: { likes: -1 } },
+        { new: true }
+      );
+      res.send(result)
+    }catch(e){
+       res.status(500).send(e.message)
     }
-    post.likes = Math.max(post.likes - 1, 0);
-    await post.save();
-    res.json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
-  }
-};
+}
+
 
 module.exports = {
   createPost,

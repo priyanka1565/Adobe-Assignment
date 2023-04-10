@@ -1,29 +1,36 @@
 const mongoose = require("mongoose");
 
-//User Schema
+const UserSchema = mongoose.Schema(
+  {
+    id: {
+      unique: true,
+      type: String,
+    },
+    name: {
+      type: String,
+      min: 1,
+      max: 50,
+      require: true,
+    },
+    email: {
+      type: String,
+      validate: {
+        validator: function (v) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        },
+        message: "Please enter a valid email",
+      },
+    },
+    bio: {
+      type: String,
+      min: 0,
+      max: 200,
+      require: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const userSchema = mongoose.Schema({
-  name: {
-    type: String,
-    require: [true, "Pleased enter your name"],
-  },
-  email: {
-    type: String,
-    require: [true, "Pleased enter your email"],
-  },
-  bio: {
-    type: String,
-    require: [true, "Pleased enter your bio"],
-  },
-  created_at: {
-    type: String,
-    require: true,
-  },
-  updated_at: {
-    type: String,
-    require: true,
-  },
-});
+const UserModel = mongoose.model("User", UserSchema);
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+module.exports = UserModel;
