@@ -8,14 +8,23 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import React from "react";
+import axios from "axios";
 
 const UserF = () => {
     const [email, setEmail] = useState("");
     const [bio, setBio] = useState("");
     const [name, setName] = useState("");
 
-    const handleSubmit = () => {
-        console.log("ghgggg")
+    const handleSubmit = async (e) => {
+         e.preventDefault();
+        //console.log("ghgggg")
+
+        const UserInfor = { name, email, bio }
+        console.log("UserInfor", UserInfor);
+
+        //fetching the data using axios
+
+        const fetch_data = await axios.post("http://localhost:8080", {});
     }
 
   return (
@@ -35,15 +44,17 @@ const UserF = () => {
             User Information
           </Heading>
           <FormControl id="name">
-            <FormLabel>  Name</FormLabel>
-                      <Input type="text" id="name" value={name}
-                          onChange={(e)=>(e.target.value)}
-                      
-                      />
+            <FormLabel> Name</FormLabel>
+            <Input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) =>setName(e.target.value)}
+            />
           </FormControl>
 
           <FormControl id="email">
-            <FormLabel>  Email</FormLabel>
+            <FormLabel> Email</FormLabel>
             <Input
               type="email"
               id="email"
@@ -53,10 +64,8 @@ const UserF = () => {
           </FormControl>
 
           <FormControl id="bio">
-            <FormLabel>  Bio</FormLabel>
-                      <Input type="textarea" value={bio}
-                          onChange={(e)=>(e.target.value)}
-                      />
+            <FormLabel> Bio</FormLabel>
+            <Input type="text" value={bio} onChange={(e) => setBio(e.target.value)} />
           </FormControl>
 
           <Button mt={4} colorScheme="cyan" type="submit">
