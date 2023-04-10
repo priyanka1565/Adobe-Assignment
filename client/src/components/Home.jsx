@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Home = () => {
   return (
     <div>
-      <Container maxW={"100%"} backgroundColor={"white"} padding={"1rem"}>
+      <Container maxW={"100%"} backgroundColor={"cyan"} padding={"1rem"}>
         <Center>
           <HStack spacing={"5rem"}>
             <Button>
